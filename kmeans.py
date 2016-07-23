@@ -41,7 +41,7 @@ def initCentroids(data, k):
 
 
 def assignCluster(centroids, data):
-	clusters = [None] * len(centroids)
+	clusters = [[]] * len(centroids)
 	distances = [0] * len(centroids)
 
 	for i in range (0, len(data), 1): #for each row
@@ -56,18 +56,22 @@ def assignCluster(centroids, data):
 	
 		for m in range (0, len(centroids), 1): 
 			d[m] = math.sqrt(d[m])
-		
+			print "distance is ", d[m]
 
 		# Assign cluster based on minDist
 		minDist = min(d) 
-		for n in range (0, len(centroids), 1): 
+		print "mindist is ", minDist
+		for n in range (0, len(centroids), 1):
 			if (minDist == d[n]):
-				if (clusters[n] == None):
-					clusters[n] = list(data[i])
-				else:
-					clusters[n].append(data[i])
-		
-	print "Current cluster assignment ", clusters
+				print "Here ", d[n]
+				clusters[n].append(data[i]) ##### TODO: fix this
+				print "clusterno ", n
+		print "Clustering ", clusters
+
+	
+	for i in range (0, len(clusters), 1):
+		print "Cluster " + str(i) + " is " + str(clusters[i])
+	
 	return clusters
 
 
