@@ -3,8 +3,6 @@ import math
 import random
 
 
-
-
 def readData(data):
     f1 = open(data)
     data = []
@@ -24,87 +22,101 @@ def readData(data):
 
 '''Initialize centroids (means) with a randomly selected datapoint from current data set'''
 
-def initCentroids(data, k):
-	centroids = [0] * k
-	randomRows = [0] * k
 
-	for i in range (0, k, 1):
-		randomRows[i] = int(len(data) * random.random())
+def init_centroids(data, k):
+    centroids = [0] * k
+    random_rows = [0] * k
 
-	for i in range (0, len(randomRows), 1):
-		r = randomRows[i]
-		#print "centroids initialized from row ", r
-		for j in range (0, len(data[0]), 1):
-			centroids[i] = centroids[i] + data[r][j]
-		centroids[i] = centroids[i] / (len(data[0]))
-	return centroids
+    for i in range(0, k, 1):
+        random_rows[i] = int(len(data) * random.random())
+
+    for i in range(0, len(random_rows), 1):
+        r = random_rows[i]
+        # print "centroids initialized from row ", r
+        for j in range(0, len(data[0]), 1):
+            centroids[i] = centroids[i] + data[r][j]
+        centroids[i] = centroids[i] / (len(data[0]))
+    return centroids
 
 
 def assignCluster(centroids, data):
-	clusters = [[]] * len(centroids)
-	distances = [0] * len(centroids)
+    clusters = [[]] * len(centroids)
+    distances = [0] * len(centroids)
 
-	for i in range (0, len(data), 1): #for each row
-		d = [0] * len(centroids)
-		for k in range (0, len(centroids), 1):  # calculate data point distance to each centroid
-			for j in range (0, len(data[0]), 1): # for each col
-				#print "d[" + str(k) + "] is " + str(d[k])
-				#print "centroids[" + str(k) + "] is " + str(centroids[k])
-				#print "data[" + str(i) + "][" + str(j) + "] is " + str(data[i][j])
-				#print "-----------------------"
-				d[k] = d[k] + (centroids[k] - data[i][j])**2  # Euclidean distance
-	
-		for m in range (0, len(centroids), 1): 
-			d[m] = math.sqrt(d[m])
-			print "distance is ", d[m]
+    for p in range(0, len(clusters), 1):
+        print "Cluster " + str(p) + " is " + str(clusters[p])
 
-		# Assign cluster based on minDist
-		minDist = min(d) 
-		print "mindist is ", minDist
-		for n in range (0, len(centroids), 1):
-			if (minDist == d[n]):
-				print "Here ", d[n]
-				clusters[n].append(data[i]) ##### TODO: fix this
-				print "clusterno ", n
-		print "Clustering ", clusters
+    for i in range(0, len(data), 1):  # for each row
+        d = [0] * len(centroids)
+        for k in range(0, len(centroids), 1):  # calculate data point distance to each centroid
+            for j in range(0, len(data[0]), 1):  # for each col
+                # print "d[" + str(k) + "] is " + str(d[k])
+                # print "centroids[" + str(k) + "] is " + str(centroids[k])
+                # print "data[" + str(i) + "][" + str(j) + "] is " + str(data[i][j])
+                # print "-----------------------"
+                d[k] = d[k] + (centroids[k] - data[i][j]) ** 2  # Euclidean distance
 
-	
-	for i in range (0, len(clusters), 1):
-		print "Cluster " + str(i) + " is " + str(clusters[i])
-	
-	return clusters
+        for m in range(0, len(centroids), 1):
+            d[m] = math.sqrt(d[m])
+            #print "distance is ", d[m]
+
+        # Assign cluster based on minDist
+        minDist = min(d)
+        print "mindist is ", minDist
+
+        for n in range(0, len(centroids), 1):
+            if (minDist == d[n]):
+                clusters[n].append(data[i])
+                #print "d[n] ", d[n]
+                # if (clusters[n] == None):
+                ##	clusters[n] = data[i]
+                # else:
+                ### TODO: fix this
+                print "clusters " + str(n) + str(clusters[n])
+                #print "Clustering ", clusters
+
+    for p in range(0, len(clusters), 1):
+        print "Cluster " + str(p) + " is " + str(clusters[p])
+
+    return clusters
 
 
 # Compute new centroids
 def moveCentroids(clusters, centroids):
-	temp = 0
-	for i in range(0, len(centroids), 1):
-		for j in range(0, len(clusters[i]), 1):  
-			centroids[i] = temp + clusters[i][j]
-			temp = centroids[i]
-		centroids[i] = centroids[i] / (len(clusters[i])) 
-		#print "Centroid" + str(i) + " is " + centroids[i]
-		#print centroids
-	return centroids
+    for i in range(0, len(centroids), 1): # for each cluster
+    	tempCluster = clusters[i]
+        
+        for j in range(0, len(clusters[i]), 1): # for each elem in cluster
+        	temp = 0
+        	for m in range (0, len(tempCluster), 1):
+        		for n in range (0, len(tempCluster[0]), 1):
+        			temp += tempCluster[m][n]
+        temp = float(temp / (len(tempCluster) * 2))
+        centroids[i] = temp
+        print "Centroid" + str(i) + " is " + str(centroids[i])
+    # print centroids
+    return centroids
+
 
 def predict(centroids, data):
-	currentClusters = 0 # this is just for initialization
-	for i in range(0, 1, 1):
-		clusters = assignCluster(centroids, data)
-		currentClusters = clusters
-		centroids = moveCentroids(clusters, centroids)
+    current_clusters = 0  # this is just for initialization
+    for i in range(0, 1, 1):
+        clusters = assignCluster(centroids, data)
+        current_clusters = clusters
+        centroids = moveCentroids(clusters, centroids)
 
-	print "Final cluster assignment: ", clusters
+    print "Final cluster assignment: ", clusters
 
 
 def main(data):
     dataList = readData(data)
     cols = len(dataList[0])
-    centroids = initCentroids(dataList, 2)
+    centroids = init_centroids(dataList, 2)
     print "Initialized centroids ", centroids
-   # means = computeInitialMeans(dataList, cols, centroids)
-    #print "here ", means
-    predict (centroids, dataList)
+    # means = computeInitialMeans(dataList, cols, centroids)
+    # print "here ", means
+    predict(centroids, dataList)
+
 
 if __name__ == '__main__':
     data = sys.argv[1]
