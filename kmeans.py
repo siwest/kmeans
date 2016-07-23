@@ -41,7 +41,7 @@ def initCentroids(data, k):
 
 
 def assignCluster(centroids, data):
-	clusters = [0] * len(centroids)
+	clusters = [None] * len(centroids)
 	distances = [0] * len(centroids)
 
 	for i in range (0, len(data), 1): #for each row
@@ -62,7 +62,7 @@ def assignCluster(centroids, data):
 		minDist = min(d) 
 		for n in range (0, len(centroids), 1): 
 			if (minDist == d[n]):
-				if (clusters[n] == 0):
+				if (clusters[n] == None):
 					clusters[n] = list(data[i])
 				else:
 					clusters[n].append(data[i])
