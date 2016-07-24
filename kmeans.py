@@ -21,30 +21,32 @@ def readData(data):
 
 
 '''Initialize centroids (means) with a randomly selected datapoint from current data set'''
-
-
 def init_centroids(data, k):
     centroids = [0] * k
+	
+	# ensures unique, random rows/data points are chosen for initialization
     random_rows = [0] * k
-
+    prev = -1
     for i in range(0, k, 1):
         random_rows[i] = int(len(data) * random.random())
+        while prev == random_rows[i]:  
+        	random_rows[i] = int(len(data) * random.random())
+    	prev = random_rows[i]
 
     for i in range(0, len(random_rows), 1):
         r = random_rows[i]
-        # print "centroids initialized from row ", r
         for j in range(0, len(data[0]), 1):
             centroids[i] = centroids[i] + data[r][j]
         centroids[i] = centroids[i] / (len(data[0]))
+
     return centroids
 
-
+''' Assign data points to a cluster '''
 def assignCluster(centroids, data):
     clusters = [[]] * len(centroids)
     distances = [0] * len(centroids)
-
-    for p in range(0, len(clusters), 1):
-        print "Cluster " + str(p) + " is " + str(clusters[p])
+    templist1 = []
+    templist2 = []
 
     for i in range(0, len(data), 1):  # for each row
         d = [0] * len(centroids)
@@ -62,18 +64,18 @@ def assignCluster(centroids, data):
 
         # Assign cluster based on minDist
         minDist = min(d)
-        print "mindist is ", minDist
-
+        #print "mindist is ", minDist
+        
         for n in range(0, len(centroids), 1):
             if (minDist == d[n]):
-                clusters[n].append(data[i])
-                #print "d[n] ", d[n]
-                # if (clusters[n] == None):
-                ##	clusters[n] = data[i]
-                # else:
-                ### TODO: fix this
-                print "clusters " + str(n) + str(clusters[n])
-                #print "Clustering ", clusters
+                #clusters[n].append(data[i])
+                #print "d[" + str(n) + "] " + str(data[i])
+                if (n == 0):
+                	templist1.append(data[i])
+                if (n == 1):
+                	templist2.append(data[i])
+    clusters[0] = templist1
+    clusters[1] = templist2
 
     for p in range(0, len(clusters), 1):
         print "Cluster " + str(p) + " is " + str(clusters[p])
@@ -81,7 +83,7 @@ def assignCluster(centroids, data):
     return clusters
 
 
-# Compute new centroids
+''' Compute new centroids '''
 def moveCentroids(clusters, centroids):
     for i in range(0, len(centroids), 1): # for each cluster
     	tempCluster = clusters[i]
@@ -94,28 +96,24 @@ def moveCentroids(clusters, centroids):
         temp = float(temp / (len(tempCluster) * 2))
         centroids[i] = temp
         print "Centroid" + str(i) + " is " + str(centroids[i])
-    # print centroids
     return centroids
 
 
-def predict(centroids, data):
+def predict(centroids, data, loopCount):
     current_clusters = 0  # this is just for initialization
-    for i in range(0, 1, 1):
+    for i in range(0, loopCount, 1): 
+    	print "----------------------"
         clusters = assignCluster(centroids, data)
         current_clusters = clusters
         centroids = moveCentroids(clusters, centroids)
-
-    print "Final cluster assignment: ", clusters
-
+    return
 
 def main(data):
     dataList = readData(data)
     cols = len(dataList[0])
     centroids = init_centroids(dataList, 2)
     print "Initialized centroids ", centroids
-    # means = computeInitialMeans(dataList, cols, centroids)
-    # print "here ", means
-    predict(centroids, dataList)
+    predict(centroids, dataList, 3)
 
 
 if __name__ == '__main__':
